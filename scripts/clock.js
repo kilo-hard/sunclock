@@ -352,7 +352,7 @@ var SunClock = (function() {
 	function getMoonPhase() {
 		moonPhase = SunCalc.getMoonIllumination(now).phase; // note: does not require location
 		if (debug) { console.log('moon phase: ' + moonPhase + ' ' + getMoonPhaseName(moonPhase).name); }
-		$('#moonIcon').innerHTML += drawMoonIcon(moonPhase);
+		$('#moonIcon path').setAttribute('d', drawMoonIcon(moonPhase) );
 	}
 
 	function getMoonPhaseName(phase) {
@@ -403,11 +403,11 @@ var SunClock = (function() {
 		let sweep1 = (phase < 0.25) ? 0 : 1;        // left arc
 		let sweep2 = (phase < 0.75) ? 1 : 0;        // right arc
 
-		// return svg path element (2 elliptical arcs)
+		// return svg path (2 elliptical arcs)
 		// Arc syntax: A rx ry x-axis-rotation large-arc-flag sweep-flag x-final y-final
-		return `<path fill="#ccc" stroke="#ccc" stroke-width="0" d="M 0 ${ry} 
+		return `M 0 ${ry} 
 			A ${rx1} ${ry} 0 0 ${sweep1} 0 ${-ry} 
-			A ${rx2} ${ry} 0 0 ${sweep2} 0 ${ry} z" />`;
+			A ${rx2} ${ry} 0 0 ${sweep2} 0 ${ry} z`;
 	}
 
 	function getMoonInfo() {
