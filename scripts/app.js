@@ -13,7 +13,7 @@
 const $ = document.querySelector.bind(document);
 const $All = document.querySelectorAll.bind(document);
 const debug = true;
-const version = '4.7.1';
+const version = '4.8.0';
 
 console.info('version: ' + version);
 
