@@ -83,8 +83,8 @@ section > div {position:relative; margin:0; padding:1em;}
 /* settings */
 #settings {display:none;}
 #settings p {line-height:1.7em;}
-#settings input[name="showOddHourNumbers"], #settings input[name="showHourMarks"],
-#settings input[name="showMinuteMarks"], #settings input[name="showMinuteNumbers"] {margin-left:2.2em;}
+#settings input[name="showOddHourNumbers"], #settings input[name="showHourMarks"], #settings input[name="showMinuteMarks"],
+	#settings input[name="showMinuteNumbers"], #settings input[name="sweepHand"] {margin-left:2.2em;}
 #setDirection {display:none; margin:-1em 0 1em 1.5em;}
 #setDirection label {font-size:0.9em;}
 #setLocation {display:none; margin:-0.5em 0 1em 1.5em;}

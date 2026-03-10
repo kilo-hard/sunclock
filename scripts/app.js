@@ -35,6 +35,7 @@ var App = (function() {
 		direction  : 1,         // 1 = clockwise, -1 = anticlockwise
     	location   : null,      // {"latitude":0,"longitude":0}
 		hour12     : false,     // use 24 hr times
+		sweepHand  : true,      // true = sweep hand, false = ticking hand
 		colorScheme: 'dynamic'  // 'light' | 'dark' | 'auto' | 'dynamic'
 	};
 
@@ -288,6 +289,10 @@ var App = (function() {
 			$('input[name="showSecondHand"]').checked = false;
 			$('#secondHand').style.display = 'none';
 		}
+		if (getItem('sweepHand') === false) {
+			$('input[name="sweepHand"]').checked = false;
+			settings.sweepHand = false;
+		}
 		if (getItem('hour12') === true) {
 			$('input[name="hour12"]').checked = true;
 			settings.hour12 = true;
@@ -359,6 +364,12 @@ var App = (function() {
 			break;
 		  case 'showSecondHand':
 			$('#secondHand').style.display = (checkbox.checked) ? 'block' : 'none';
+			break;
+		  case 'showSecondHand':
+			$('#secondHand').style.display = (checkbox.checked) ? 'block' : 'none';
+			break;
+		  case 'sweepHand':
+			settings.sweepHand = checkbox.checked;
 			break;
 		  case 'hour12':
 			settings.hour12 = checkbox.checked;
