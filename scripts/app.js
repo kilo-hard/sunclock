@@ -480,8 +480,8 @@ var App = (function() {
 
 			// get times for this location
 			SunClock.getSunTimes();
-			// update calendar face to reflect latidude
-			SunCalendar.drawFace();
+			// localise calendar
+			SunCalendar.localiseFace();
 		} else {
 			$('#location').innerHTML = 'Location not set';
 			clearLocation();
@@ -503,6 +503,8 @@ var App = (function() {
 
 		// update times from clock
 		SunClock.clearSunTimes();
+		// localise calendar to northern default (no location)
+		SunCalendar.localiseFace();
 	}
 
 

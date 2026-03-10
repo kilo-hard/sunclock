@@ -64,64 +64,26 @@ const SunCalendar = (function() {
 		msPerYear = daysPerYear * msPerDay; // milliseconds per year
 	}
 
-	function update() {
-		// set hand position, repeat on the minute
-		now = new Date();
-		if (debug) { console.log(`updating calendar: ${now.toTimeString()}`); }
-
-		if (then && (now.getFullYear() !== then.getFullYear())) {
-			alert("Happy New Year!\nupdating calendar");
-			getDate();
-			// redraw face
-			drawFace();
-			// clear moon phases and redraw astronomical events
-			$All('.moonPhase').forEach((o) => { o.remove(); });
-			drawAstronomicalEvents();
-			drawMoonPhases();
-		}
-
-		// set date hand
-		$('#dateHand').setAttribute('transform', `rotate(${dateToAngle(now)})`);
-
-		// calendar icon text
-		$('#calendarIconMonth').textContent = (now.toLocaleString('default', { month: 'short' })).toUpperCase();
-		$('#calendarIconDate').textContent  = now.getDate();
-
-		// update every minute, on the minute
-		then = now;
-		let delay = 60000 - now.getSeconds() * 1000 - now.getMilliseconds();
-		setTimeout(update, delay);
-	}
-
 	function drawFace() {
-		// draw the calendar face: month arcs and names, day marks
+		// draw the calendar face: month arcs and names, day marks, moon phases
 		let length, angle, month, d1, d2, d3, p1, p2;
 		let str1 = '', str2 = '', str3 = '';
 		let r1 = radius - 17;
 		let r2 = radius - 28;
 		let r3 = radius - 24.5;
 		let daysPerMonth = [31, (leapYear ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-		let j;
 
-		// months
+		// months (use northern default; localiseFace() updates classes for southern hemisphere)
 		for (let i=0; i<12; i++) {
 			// get dates for beginning and end of month
 			d1 = new Date(thisYear, i, 1);
 			d2 = new Date(thisYear, i+1, 1);
 			month = d1.toLocaleString('default', { month: 'long' });
 
-			// month background colors (sets style via a class) - offset 6 months for southern latitudes
-			if ((App.settings.location) && (App.settings.location.latitude < 0)) {
-				j = i + 6;
-				if (j >= 12) { j -= 12; }
-			} else {
-				j = i;
-			}
-
-			// get points for each date and draw an arc
+			// get points for each date and draw an arc (class m1..m12, northern order)
 			p1 = getPointFromAngle(dateToAngle(d1), r1);
 			p2 = getPointFromAngle(dateToAngle(d2), r1);
-			str1 += `<path class="m${j+1}" d="M ${p1} A ${r1} ${r1} 0 0 1 ${p2}" stroke-width="34" />`;
+			str1 += `<path class="m${i+1}" d="M ${p1} A ${r1} ${r1} 0 0 1 ${p2}" stroke-width="34" />`;
 
 			// write month name on arc
 			if ((i < 3) || (i > 8)) {
@@ -152,8 +114,20 @@ const SunCalendar = (function() {
 		$('#monthNames').innerHTML = str2;
 		$('#dayMarks').innerHTML   = str3;
 
-		drawAstronomicalEvents();
 		drawMoonPhases();
+	}
+
+	function localiseFace() {
+		// apply location-based styling: month arc colors, astronomical events
+		let South = ((App.settings.location) && (App.settings.location.latitude < 0));
+
+		// update month arc classes for southern hemisphere (offset 6 months)
+		$All('#monthArcs > path').forEach((path, i) => {
+			let j = South ? (i + 6) % 12 : i;
+			path.setAttribute('class', `m${j + 1}`);
+		});
+
+		drawAstronomicalEvents();
 	}
 
 	function drawAstronomicalEvents() {
@@ -226,14 +200,6 @@ const SunCalendar = (function() {
 
 			qAngle = dateToAngle(qDate);
 
-			// old: use unicode icons for moon phase
-			/* str += `
-				<g class="moonPhase" data-title="${qTitle}" data-date="${qDate2}" stroke="currentColor" transform="rotate(${qAngle})">
-					<line x1="0" y1="${-radius}" x2="0" y2="${-radius-3}" />
-					<text x="-2.5" y="${-radius-5}" font-size="5px">${qIcon}</text>
-				</g>`; */
-
-			// new: use SVG path element
 			str += `
 				<g id="moonQuarter${i}" class="moonPhase" data-title="${qTitle}" data-date="${qDate2}" stroke="currentColor" transform="rotate(${qAngle})">
 					<g transform="translate(0 ${-radius+15})">
@@ -244,12 +210,37 @@ const SunCalendar = (function() {
 				</g>`;
 		}
 		if (debug) { console.groupEnd(); }
-		$('#moonPhases').innerHTML += str;
+		$('#moonPhases').innerHTML = str;
 
 		// add hover events to all moonPhases
 		$All('#moonPhases > g').forEach((o) => {
 			App.showInfoOnHover(o, getAstronomicalEventInfo, o.id);
 		});
+	}
+
+	function update() {
+		// set hand position, repeat on the minute
+		now = new Date();
+		if (debug) { console.log(`updating calendar: ${now.toTimeString()}`); }
+
+		if (then && (now.getFullYear() !== then.getFullYear())) {
+			alert("Happy New Year!\nupdating calendar");
+			getDate();
+			drawFace();
+			localiseFace();
+		}
+
+		// set date hand
+		$('#dateHand').setAttribute('transform', `rotate(${dateToAngle(now)})`);
+
+		// calendar icon text
+		$('#calendarIconMonth').textContent = (now.toLocaleString('default', { month: 'short' })).toUpperCase();
+		$('#calendarIconDate').textContent  = now.getDate();
+
+		// update every minute, on the minute
+		then = now;
+		let delay = 60000 - now.getSeconds() * 1000 - now.getMilliseconds();
+		setTimeout(update, delay);
 	}
 
 	function getAstronomicalEventInfo(id) {
@@ -326,6 +317,7 @@ const SunCalendar = (function() {
 	return {
 		update,
 		drawFace,
+		localiseFace,
 		init
 	};
 })();
