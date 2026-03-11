@@ -593,12 +593,10 @@ var SunClock = (function() {
 		// animation loop
 
 		let direction = App.settings.direction;
-		let showSecondHand = ($('#secondHand').style.display === 'block');
-		let sweepHand = App.settings.sweepHand;
 		now = new Date();
 
 		seconds = now.getSeconds() + (now.getMilliseconds())/1000;
-		if (!sweepHand) { seconds = Math.round(seconds); } // round to nearest second if not sweeping
+		if (!App.settings.sweepHand) { seconds = Math.round(seconds); } // round to nearest second if not sweeping
 		minutes = now.getMinutes() + seconds/60;
 		hours   = now.getHours()   + minutes/60;
 
@@ -661,7 +659,7 @@ var SunClock = (function() {
 		if (!then) { writeDate(); }
 
 		then = now;
-		if (sweepHand && showSecondHand) {
+		if (App.settings.sweepHand && App.settings.showSecondHand) {
 			window.requestAnimationFrame(tick);
 		} else {
 			now = new Date(); // get new now, in case the above takes more than a few milliseconds
