@@ -7,7 +7,7 @@
 */
 
 /* jshint esversion: 6 */
-/* globals $, $All, debug, App, SunCalc */
+/* globals $, $All, debug, App, SunCalendar, SunCalc */
 
 var SunClock = (function() {
 	'use strict';

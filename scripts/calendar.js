@@ -172,7 +172,7 @@ const SunCalendar = (function() {
 	function drawMoonPhases() {
 		// draw phases of the moon
 		let quarters = [];
-		let qAngle, qDate, qDate2, qTitle, qIcon, str;
+		let qAngle, qDate, qDate2, qTitle, qIcon, str = '';
 
 		const moons = [
 			['New Moon',           '🌑'],
