@@ -116,7 +116,7 @@ section > div {position:relative; margin:0; padding:1em;}
 	html, html body {background:#ccc;}
 	section.overlay {background:rgba(204,204,204,0.9); overflow:hidden;}
 	section.overlay > div {width:40em; max-width:80vw; height:auto; max-height:90vh; max-height:90dvh; margin:5vh auto; margin:5dvh auto; background:rgba(255,255,255,0.7); overflow-x:hidden; overflow-y:auto; border:1px solid #999; border-radius:7px; box-shadow:0 5px 10px 8px rgba(0, 0, 0, 0.2);;}
-	#settings.overlay > div {width:20em;}
+	#settings.overlay > div {width:22em;}
 }
 
 @media (hover:none) {
