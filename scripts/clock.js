@@ -9,7 +9,7 @@
 /* jshint esversion: 6 */
 /* globals $, $All, debug, App, SunCalendar, SunCalc */
 
-var SunClock = (function() {
+const SunClock = (function() {
 	'use strict';
 
 	const tau = 2 * Math.PI;

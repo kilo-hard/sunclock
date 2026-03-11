@@ -21,7 +21,7 @@ if (debug) { console.info('version: ' + version); }
 	App handles navigation, routes, settings, dark mode, and date formatting
 */
 
-var App = (function() {
+const App = (function() {
 	'use strict';
 
 	let prefersDark   = window.matchMedia('(prefers-color-scheme: dark)');
