@@ -11,7 +11,15 @@ const assets = [
 	"/scripts/clock.js",
 	"/scripts/calendar.js",
 	"/libs/suncalc/suncalc.js",
-	"/libs/astronomy/astronomy.browser.min.js"
+	"/libs/astronomy/astronomy.browser.min.js",
+	"/icons/icon_32.png",
+	"/icons/icon_64.png",
+	"/icons/icon_128.png",
+	"/icons/icon_192.png",
+	"/icons/icon_256.png",
+	"/icons/icon.png",
+	"/icons/icon.svg",
+	"/icons/icon_maskable.svg"
 ];
 
 // install event
