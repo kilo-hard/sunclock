@@ -412,7 +412,7 @@ var SunClock = (function() {
 
 	function getMoonInfo() {
 		// get info for moon
-		// note: moon phase does not require a location, but positon and times do
+		// note: moon phase does not require a location, but position and times do
 		let location = App.settings.location;
 		let str = `<h3>Moon</h3>
 			<p>${getMoonPhaseName(moonPhase).name}<br>(${(moonPhase * 29.53).toFixed(1)} days old)</p>`;
