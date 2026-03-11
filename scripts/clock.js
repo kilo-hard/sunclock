@@ -593,6 +593,7 @@ var SunClock = (function() {
 		// animation loop
 
 		let direction = App.settings.direction;
+		let showSecondHand = ($('#secondHand').style.display === 'block');
 		let sweepHand = App.settings.sweepHand;
 		now = new Date();
 
@@ -660,7 +661,7 @@ var SunClock = (function() {
 		if (!then) { writeDate(); }
 
 		then = now;
-		if (sweepHand) {
+		if (sweepHand && showSecondHand) {
 			window.requestAnimationFrame(tick);
 		} else {
 			now = new Date(); // get new now, in case the above takes more than a few milliseconds
