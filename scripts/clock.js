@@ -635,20 +635,20 @@ var SunClock = (function() {
 
 		// update the sun times at midnight
 		if ( then && (now.getDate() !== then.getDate()) ) {
-			console.log('midnight: updating sun times!');
+			if (debug) { console.log('midnight: updating sun times!'); }
 			getSunTimes();
 			writeDate();
 		}
 
 		// update the sun times at solar midnight
 		if ( then && sunTimes && (now >= sunTimes.nadir2) ) {
-			console.log('solar midnight: updating sun times!');
+			if (debug) { console.log('solar midnight: updating sun times!'); }
 			getSunTimes();
 		}
 
 		// redraw time periods if the time zone changes (e.g. daylight savings changes)
 		if ( then && (now.getTimezoneOffset() !== then.getTimezoneOffset()) ) {
-			console.log('time zone change: redrawing time periods!');
+			if (debug) { console.log('time zone change: redrawing time periods!'); }
 			drawTimePeriods();
 		}
 

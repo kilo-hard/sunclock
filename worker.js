@@ -1,6 +1,7 @@
 /* jshint esversion: 6 */
 /* globals self, caches */
 
+const debug = self.location?.hostname === 'localhost' || self.location?.hostname === '127.0.0.1' || self.location?.search?.includes('debug=1');
 const currentCache = '4.8.0';
 const assets = [
 	"/",
@@ -24,13 +25,13 @@ const assets = [
 
 // install event
 self.addEventListener('install', event => {
-	console.log('Service worker install event', event);
+	if (debug) { console.log('Service worker install event', event); }
 
 	// Cache assets
 	event.waitUntil(
 		caches.open(currentCache)
 		.then(cache => {
-			console.log('Caching assets');
+			if (debug) { console.log('Caching assets'); }
 			cache.addAll(assets);
 		})
 		.then(() => {
@@ -42,7 +43,7 @@ self.addEventListener('install', event => {
 
 // activate event
 self.addEventListener('activate', event => {
-	console.log('Service worker activate event', event);
+	if (debug) { console.log('Service worker activate event', event); }
 
 	// Delete old caches
 	event.waitUntil(
@@ -50,7 +51,7 @@ self.addEventListener('activate', event => {
 			return Promise.all(
 				cacheNames.map(cacheName => {
 					if (cacheName !== currentCache) {
-						console.log(`Deleting old cache: ${cacheName}`);
+						if (debug) { console.log(`Deleting old cache: ${cacheName}`); }
 						return caches.delete(cacheName);  // Delete old caches
 					}
 				})
@@ -64,7 +65,7 @@ self.addEventListener('activate', event => {
 
 // fetch event: network first for HTML, then cache first for assets
 self.addEventListener('fetch', event => {
-	console.log(`Fetching: ${event.request.url}`);
+	if (debug) { console.log(`Fetching: ${event.request.url}`); }
 
 	// Network-first for HTML
 	if (event.request.mode === 'navigate') {
@@ -90,14 +91,14 @@ self.addEventListener('fetch', event => {
 		caches.match(event.request)
 			.then(response => {
 				if (response) {
-					console.log(`Getting from cache: ${response.url}`);
+					if (debug) { console.log(`Getting from cache: ${response.url}`); }
 					return response;
 				}
 
 				// If not in cache, fetch and cache it
 				return fetch(event.request.clone()).then(response => {
 					if (response.status < 400) {
-						console.log(`Caching: ${response.url}`);
+						if (debug) { console.log(`Caching: ${response.url}`); }
 						caches.open(currentCache).then(cache => {
 							cache.put(event.request, response.clone());
 						});
@@ -106,7 +107,7 @@ self.addEventListener('fetch', event => {
 				});
 			})
 			.catch((error) => {
-				console.error('Error fetching:', error);
+				if (debug) { console.error('Error fetching:', error); }
 				throw error;
 			})
 	);

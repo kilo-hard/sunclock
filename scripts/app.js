@@ -15,7 +15,7 @@ const $All = document.querySelectorAll.bind(document);
 const debug = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.search.includes('debug=1');
 const version = '4.8.0';
 
-console.info('version: ' + version);
+if (debug) { console.info('version: ' + version); }
 
 /*
 	App handles navigation, routes, settings, dark mode, and date formatting
@@ -100,7 +100,6 @@ var App = (function() {
 
 	function setDark(e) {
 		// set dark mode based on OS settings
-		console.log(e);
 		if (settings.colorScheme === 'auto') {
 			document.documentElement.setAttribute("data-theme", ((e.matches) ? 'dark' : 'light'));
 		}
@@ -489,7 +488,7 @@ var App = (function() {
 	}
 
 	function showLocationError(err) {
-		console.error(err);
+		if (debug) { console.error(err); }
 		$('#location').innerHTML = `Location error: ${err.message || geoErrors[err.code]}`;
 		clearLocation();
 	}
@@ -660,11 +659,11 @@ window.addEventListener('DOMContentLoaded', App.init);
 if ("serviceWorker" in navigator) {
 	navigator.serviceWorker.register('worker.js?v=' + version) 
 	.then(registration => {
-		console.log('Service Worker registered:', registration);
+		if (debug) { console.log('Service Worker registered:', registration); }
 	})
 	.catch(error => {
-		console.error('Service Worker registration failed:', error);
+		if (debug) { console.error('Service Worker registration failed:', error); }
 	});
 } else {
-	console.error("Service workers are not supported");
+	if (debug) { console.error("Service workers are not supported"); }
 }
