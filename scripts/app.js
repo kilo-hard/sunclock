@@ -12,7 +12,7 @@
 // shortcuts
 const $ = document.querySelector.bind(document);
 const $All = document.querySelectorAll.bind(document);
-const debug = true;
+const debug = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.search.includes('debug=1');
 const version = '4.8.0';
 
 console.info('version: ' + version);
