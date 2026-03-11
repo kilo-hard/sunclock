@@ -30,13 +30,23 @@ const App = (function() {
 	let isLandscape   = window.matchMedia('(orientation:landscape)').matches;
 	let lastSection   = '';
 
-	// app settings - stored in localStorage
+	// app settings - single source of truth for defaults and current values
 	let settings = {
-		direction  : 1,         // 1 = clockwise, -1 = anticlockwise
-    	location   : null,      // {"latitude":0,"longitude":0}
-		hour12     : false,     // use 24 hr times
-		sweepHand  : true,      // true = sweep hand, false = ticking hand
-		colorScheme: 'dynamic'  // 'light' | 'dark' | 'auto' | 'dynamic'
+		showMoon           : true,
+		showHourNumbers    : true,
+		showOddHourNumbers : false,
+		showHourMarks      : true,
+		showMinuteHand     : true,
+		showMinuteMarks    : true,
+		showMinuteNumbers  : true,
+		showSecondHand     : true,
+		sweepHand          : true,
+		hour12             : false,
+		setDirectionManually : false,
+		direction          : 1,         // 1 = clockwise, -1 = anticlockwise
+		setLocationManually : false,
+		location           : null,      // { latitude, longitude }
+		colorScheme        : 'dynamic'  // 'light' | 'dark' | 'auto' | 'dynamic'
 	};
 
 	const geoOptions = {enableHighAccuracy: true, timeout: 5000, maximumAge: 0};
@@ -245,191 +255,128 @@ const App = (function() {
 
 	/* --- options (settings) --- */
 
-	function loadOptions() {
-		// load options from localStorage, and set checkboxes, etc. on page load
-		if (!storageAvailable('localStorage')) {
-			alert('Settings can not be loaded: using default settings');
-			$('#settingsForm').insertAdjacentHTML('beforebegin', '<p style="color:#d00"><strong>Storage not available: settings can not be saved!</strong></p>');
-			return;
-		}
-		if (getItem('showMoon') === false) {
-			$('input[name="showMoon"]').checked = false;
-			$('#moonHand').style.display = 'none';
-		}
-		if (getItem('showHourNumbers') === false) {
-			$('input[name="showHourNumbers"]').checked = false;
-			$('#hourNumbers').style.display = 'none';
-			// if hour numbers are hidden, make the even hour marks the longer ones (rotate long marks 15° = 1 hr)
-			$('#hourMarks2').setAttribute('transform', 'rotate(15)');
-		}
-		if (getItem('showOddHourNumbers') === true) {
-			$('input[name="showOddHourNumbers"]').checked = true;
-			$('#hourNumbers').classList.add('showOdd');
-			$('#hourMarks2').style.display = 'none';
-		}
-		if (getItem('showHourMarks') === false) {
-			$('input[name="showHourMarks"]').checked = false;
-			$('#hourMarks').style.display = 'none';
-			$('#hourMarks2').style.display = 'none';
-		}
-		if (getItem('showMinuteHand') === false) {
-			$('input[name="showMinuteHand"]').checked = false;
-			$('#minuteHand').style.display = 'none';
-		}
-		if (getItem('showMinuteNumbers') === false) {
-			$('input[name="showMinuteNumbers"]').checked = false;
-			$('#minuteNumbers').style.display = 'none';
-		}
-		if (getItem('showMinuteMarks') === false) {
-			$('input[name="showMinuteMarks"]').checked = false;
-			$('#minuteMarks').style.display = 'none';
-		}
-		if (getItem('showSecondHand') === false) {
-			$('input[name="showSecondHand"]').checked = false;
-			$('#secondHand').style.display = 'none';
-		}
-		if (getItem('sweepHand') === false) {
-			$('input[name="sweepHand"]').checked = false;
-			settings.sweepHand = false;
-		}
-		if (getItem('hour12') === true) {
-			$('input[name="hour12"]').checked = true;
-			settings.hour12 = true;
-		}
-
-		// direction
-		if (getItem('setDirectionManually') === true) {
-			$('input[name="setDirectionManually"]').checked = true;
-			$('#setDirection').style.display = 'block';
-		}
-		if (getItem('direction') !== null) {
-			settings.direction = getItem('direction');
-			$('#direction_cw').checked  = (settings.direction > 0) ? true : false;
-			$('#direction_ccw').checked = (settings.direction > 0) ? false : true;
-		}
-
-		// location
-		if (getItem('setLocationManually') === true) {
-			$('input[name="setLocationManually"]').checked = true;
-			$('#setLocation').style.display = 'block';
-		}
-		if (getItem('location') !== null) {
-			settings.location = getItem('location');
+	function syncFormFromSettings() {
+		$('input[name="showMoon"]').checked           = settings.showMoon;
+		$('input[name="showHourNumbers"]').checked    = settings.showHourNumbers;
+		$('input[name="showOddHourNumbers"]').checked = settings.showOddHourNumbers;
+		$('input[name="showHourMarks"]').checked      = settings.showHourMarks;
+		$('input[name="showMinuteHand"]').checked     = settings.showMinuteHand;
+		$('input[name="showMinuteMarks"]').checked    = settings.showMinuteMarks;
+		$('input[name="showMinuteNumbers"]').checked  = settings.showMinuteNumbers;
+		$('input[name="showSecondHand"]').checked     = settings.showSecondHand;
+		$('input[name="sweepHand"]').checked          = settings.sweepHand;
+		$('input[name="hour12"]').checked             = settings.hour12;
+		$('input[name="setDirectionManually"]').checked = settings.setDirectionManually;
+		$('#direction_cw').checked                    = (settings.direction > 0);
+		$('#direction_ccw').checked                   = (settings.direction < 0);
+		$('input[name="setLocationManually"]').checked = settings.setLocationManually;
+		if (settings.location) {
 			$('input[name="latitude"]').value  = settings.location.latitude;
 			$('input[name="longitude"]').value = settings.location.longitude;
 		}
+		$('#scheme_light').checked   = (settings.colorScheme === 'light');
+		$('#scheme_dark').checked    = (settings.colorScheme === 'dark');
+		$('#scheme_auto').checked    = (settings.colorScheme === 'auto');
+		$('#scheme_dynamic').checked = (settings.colorScheme === 'dynamic');
 
-		// color scheme
-		if (getItem('colorScheme') !== null) {
-			settings.colorScheme = getItem('colorScheme');
-			$('#scheme_light').checked   = (settings.colorScheme === 'light') ? true : false;
-			$('#scheme_dark').checked    = (settings.colorScheme === 'dark')  ? true : false;
-			$('#scheme_auto').checked    = (settings.colorScheme === 'auto')  ? true : false;
-			$('#scheme_dynamic').checked = (settings.colorScheme === 'dynamic') ? true : false;
-			updateColorScheme();
+		$('#setDirection').style.display = settings.setDirectionManually ? 'block' : 'none';
+		$('#setLocation').style.display  = settings.setLocationManually ? 'block' : 'none';
+	}
+
+	function applySettingsToDOM() {
+		// Clock display visibility
+		$('#moonHand').style.display       = settings.showMoon ? 'block' : 'none';
+		$('#hourNumbers').style.display    = settings.showHourNumbers ? 'block' : 'none';
+		$('#hourMarks2').setAttribute('transform', settings.showHourNumbers ? 'rotate(0)' : 'rotate(15)');
+
+		$('#hourNumbers').classList.toggle('showOdd', settings.showOddHourNumbers);
+		$('#hourMarks2').style.display = (settings.showHourMarks && !settings.showOddHourNumbers) ? 'block' : 'none';
+
+		$('#hourMarks').style.display    = settings.showHourMarks ? 'block' : 'none';
+		$('#minuteHand').style.display   = settings.showMinuteHand ? 'block' : 'none';
+		$('#minuteMarks').style.display  = settings.showMinuteMarks ? 'block' : 'none';
+		$('#minuteNumbers').style.display = settings.showMinuteNumbers ? 'block' : 'none';
+		$('#secondHand').style.display   = settings.showSecondHand ? 'block' : 'none';
+
+		// SunClock methods (requires SunClock.init to have run)
+		if (typeof SunClock !== 'undefined' && SunClock.writeMainTimes) {
+			SunClock.writeMainTimes();
+			SunClock.drawNumbers();
+			SunClock.updateDirection();
 		}
+
+		updateColorScheme();
+	}
+
+	function loadOptions() {
+		if (!storageAvailable('localStorage')) {
+			$('#settingsForm').insertAdjacentHTML('beforebegin', '<p class="error"><strong>Storage not available: settings can not be&nbsp;saved!</strong></p>');
+			return;
+		}
+
+		// Overwrite settings from localStorage where values exist
+		const keys = Object.keys(settings);
+		for (const key of keys) {
+			const stored = getItem(key);
+			if (stored !== null) {
+				settings[key] = stored;
+			}
+		}
+
+		syncFormFromSettings();
+		applySettingsToDOM();
 	}
 
 	function setOption(e) {
-		// handle options checkboxes and radio buttons
-		let checkbox = e.target;
-		if (debug) { console.log(checkbox.name, checkbox.checked); }
-		switch (checkbox.name) {
-		  case 'showMoon':
-			$('#moonHand').style.display = (checkbox.checked) ? 'block' : 'none';
-			break;
-		  case 'showHourNumbers':
-			$('#hourNumbers').style.display = (checkbox.checked) ? 'block' : 'none';
-			// if hour numbers are hidden, make the even hour marks the longer ones (rotate long marks 15° = 1 hr)
-			$('#hourMarks2').setAttribute('transform', ((checkbox.checked) ? 'rotate(0)' : 'rotate(15)'));
-			break;
-		  case 'showOddHourNumbers':
-			$('#hourNumbers').classList.toggle('showOdd');
-			$('#hourMarks2').style.display = (checkbox.checked) ? 'none' : 'block';
-			break;
-		  case 'showHourMarks':
-			$('#hourMarks').style.display = (checkbox.checked) ? 'block' : 'none';
-			let oddHours = $('input[name="showOddHourNumbers"]');
-			$('#hourMarks2').style.display = (checkbox.checked && !oddHours.checked) ? 'block' : 'none';
-			break;
-		  case 'showMinuteHand':
-			$('#minuteHand').style.display = (checkbox.checked) ? 'block' : 'none';
-			break;
-		  case 'showMinuteNumbers':
-			$('#minuteNumbers').style.display = (checkbox.checked) ? 'block' : 'none';
-			break;
-		  case 'showMinuteMarks':
-			$('#minuteMarks').style.display = (checkbox.checked) ? 'block' : 'none';
-			break;
-		  case 'showSecondHand':
-			$('#secondHand').style.display = (checkbox.checked) ? 'block' : 'none';
-			break;
-		  case 'showSecondHand':
-			$('#secondHand').style.display = (checkbox.checked) ? 'block' : 'none';
-			break;
-		  case 'sweepHand':
-			settings.sweepHand = checkbox.checked;
-			break;
-		  case 'hour12':
-			settings.hour12 = checkbox.checked;
-			SunClock.writeMainTimes(); // rewrite the main times (the info2 times update when shown)
-			SunClock.drawNumbers();    // redraw the numbers on the clock face
-			break;
+		const input = e.target;
+		let key = input.name;
+		let value = input.checked;
 
-		  case 'setDirectionManually':
-			$('#setDirection').style.display = (checkbox.checked) ? 'block' : 'none';
-			if (checkbox.checked) {
-				// was unchecked, now checked - set radio buttons to current direction, and save direction
-				$('#direction_cw').checked  = (settings.direction > 0) ? true : false;
-				$('#direction_ccw').checked = (settings.direction > 0) ? false : true;
-				setItem('direction', settings.direction);
-			} else {
-				// was checked, now unchecked - update direction
-				if (settings.location && settings.location.latitude) {
-					settings.direction = (settings.location.latitude >= 0) ? 1 : -1;
-				} else {
-					settings.direction = 1;
-				}
-				setItem('direction', settings.direction);
-				SunClock.updateDirection();
-			}
-			break;
-		  case 'setDirection':
-		    // note: radio buttons have name="setDirection" but the *setting* is 'direction';
-			settings.direction = (checkbox.value === 'clockwise') ? 1 : -1;
-			setItem('direction', settings.direction);
-			SunClock.updateDirection();
-			break;
-
-		  case 'setLocationManually':
-			$('#setLocation').style.display = (checkbox.checked) ? 'block' : 'none';
-			if (checkbox.checked) {
-				// was unchecked, now checked - show location
-				settings.location = getItem('location');
-				if (settings.location) {
-					// in case text fields have been modified or cleared:
-					$('input[name=latitude]').value  = settings.location.latitude;
-					$('input[name=longitude]').value = settings.location.longitude;
-				}
-				showLocation({coords: settings.location});
-			} else {
-				// was checked, now unchecked - need to get location again
-				setItem(event.target.name, checkbox.checked); // need to save *before* getLocation
-				getLocation();
-			}
-			break;
-
-		  case 'setColorScheme':
-		    // note: radio buttons have name="setColorScheme" but the *setting* is 'colorScheme';
-			settings.colorScheme = checkbox.value;
-			setItem('colorScheme', JSON.stringify(settings.colorScheme));
-			updateColorScheme();
-			break;
-
-		  default:
-			alert('wot?');
+		if (input.type === 'radio') {
+			key = (input.name === 'setDirection') ? 'direction' : (input.name === 'setColorScheme') ? 'colorScheme' : input.name;
+			value = (input.name === 'setDirection') ? (input.value === 'clockwise' ? 1 : -1) : input.value;
 		}
-		setItem(checkbox.name, checkbox.checked);
+
+		if (debug) { console.log(key, value); }
+
+		// Update settings
+		if (settings.hasOwnProperty(key)) {
+			settings[key] = value;
+		} else {
+			if (debug) { console.error('Unknown option: ' + key); }
+			return;
+		}
+
+		// Save (stringify colorScheme and location for JSON round-trip)
+		if (key === 'colorScheme' || key === 'location') {
+			setItem(key, JSON.stringify(settings[key]));
+		} else {
+			setItem(key, settings[key]);
+		}
+
+		// Special handling for setLocationManually: when unchecked, fetch location from geolocation
+		if (key === 'setLocationManually' && !value) {
+			getLocation();
+		}
+
+		// Special handling for setDirectionManually: when unchecked, derive direction from latitude
+		if (key === 'setDirectionManually' && !value) {
+			if (settings.location && settings.location.latitude !== undefined) {
+				settings.direction = (settings.location.latitude >= 0) ? 1 : -1;
+			} else {
+				settings.direction = 1;
+			}
+			setItem('direction', settings.direction);
+		}
+
+		// Special handling for setLocationManually: when checked, show current location
+		if (key === 'setLocationManually' && value && settings.location) {
+			syncFormFromSettings();
+			showLocation({ coords: settings.location });
+		}
+
+		syncFormFromSettings();
+		applySettingsToDOM();
 	}
 
 
@@ -437,20 +384,25 @@ const App = (function() {
 
 	function updateLocation(form) {
 		// handle location form submit
-		console.log(`updating location to ${form.latitude.value}, ${form.longitude.value}`);
-		// parseFloat returns a number or NaN
-		// TODO: check values are valid, or use default values (should be handled by input type/min/max)
-		settings.location = {latitude:parseFloat(form.latitude.value), longitude:parseFloat(form.longitude.value)};
+		const lat = parseFloat(form.latitude.value);
+		const lng = parseFloat(form.longitude.value);
+
+		if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+			alert('Please enter valid coordinates. Latitude: -90 to 90. Longitude: -180 to 180.');
+			return false;
+		}
+
+		settings.location = { latitude: lat, longitude: lng };
 		setItem('location', JSON.stringify(settings.location));
-		showLocation({coords: settings.location});
-		closeSection(); // close settings on location submit
+		showLocation({ coords: settings.location });
+		closeSection();
 		return false;
 	}
 
 	function getLocation() {
 		// get location from localStorage or Geolocation API
-		if (getItem('setLocationManually') === true) {
-			showLocation({coords: settings.location});
+		if (settings.setLocationManually) {
+			showLocation({ coords: settings.location });
 		} else if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(showLocation, showLocationError, geoOptions);
 		} else {
@@ -471,7 +423,7 @@ const App = (function() {
 				//<br><small>(Accuracy: ${location.accuracy} m)</small>`;
 
 			// if setDirectionManually option is not set (or false), choose direction based on latitude
-			if (getItem('setDirectionManually') !== true) {
+			if (!settings.setDirectionManually) {
 				settings.direction = (location.latitude >= 0) ? 1 : -1;
 				setItem('direction', settings.direction); // save direction for next time - to prevent jump when geolocation loads
 				SunClock.updateDirection();
@@ -597,6 +549,9 @@ const App = (function() {
 		// initialise the clock and calendar
 		SunClock.init();
 		SunCalendar.init();
+
+		// re-apply settings now that SunClock is initialised (ensures writeMainTimes, drawNumbers, updateDirection run)
+		applySettingsToDOM();
 
 		// make overlays, handle section links
 		$All('section').forEach(item => { item.classList.add('overlay'); }); // visible if JS disabled
