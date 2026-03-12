@@ -212,12 +212,10 @@
 	<section id="about">
 		<div>
 			<h2>About</h2>
-			<p>Sun Clock is a 24-hour clock that displays the position of the sun, and times of <a href="https://en.wikipedia.org/wiki/Sunrise" target="wikipedia">sunrise</a>, <a href="https://en.wikipedia.org/wiki/Noon#Solar_noon" target="wikipedia">solar noon</a>, <a href="https://en.wikipedia.org/wiki/Sunset" target="wikipedia">sunset</a>, <a href="https://en.wikipedia.org/wiki/Golden_hour_(photography)" target="wikipedia">golden hour</a>, and <a href="https://en.wikipedia.org/wiki/Twilight" target="wikipedia">twilight</a> for your current location.</p>
-			<p>It also shows the position and <a href="https://en.wikipedia.org/wiki/Lunar_phase" target="wikipedia">phase</a> of the moon, and its rising and setting times.</p>
-			<noscript><p><b>This site requires JavaScript to work.</b> Page weight is under 50 KB, and there's no advertising or tracking (only a tiny stats script from <a href="https://simpleanalytics.com">Simple Analytics</a>). It's worth it, honest ;)</p></noscript>
+			<p>Sun Clock is a 24-hour clock that displays the position of the sun, and times of <a href="https://en.wikipedia.org/wiki/Sunrise" target="wikipedia">sunrise</a>, <a href="https://en.wikipedia.org/wiki/Noon#Solar_noon" target="wikipedia">solar noon</a>, <a href="https://en.wikipedia.org/wiki/Sunset" target="wikipedia">sunset</a>, <a href="https://en.wikipedia.org/wiki/Golden_hour_(photography)" target="wikipedia">golden hour</a>, and <a href="https://en.wikipedia.org/wiki/Twilight" target="wikipedia">twilight</a> for your current location. It also shows the position and <a href="https://en.wikipedia.org/wiki/Lunar_phase" target="wikipedia">phase</a> of the moon, and its rising and setting times.</p>
+			<noscript><p><b>This site requires JavaScript to work.</b> Page weight is ~100 KB, and there's no advertising or tracking (only a tiny stats script from <a href="https://simpleanalytics.com">Simple Analytics</a>). It's worth it, honest ;)</p></noscript>
 
-			<p>In the Northern Hemisphere the Sun moves across the sky in a clockwise direction; in the Southern Hemisphere, it moves anti-clockwise. Sun Clock matches this by setting its direction of rotation based on your latitude<a href="#note1"><sup>1</sup></a>. You can change it in the settings if you wish.</p>
-			<p id="note1"><small>1. Ideally you want the clock to turn in the same direction as the sun, regardless of which hemisphere you are in. If you are facing North when at your computer set it to anti-clockwise.</small></p>
+			<p><a href="#direction">A note about direction</a><a href="#note1"><sup>1</sup></a> <span id="note1"><small> — why does it go backwards?</small></span></p>
 
 			<h3>Tips</h3>
 			<p>Tap on or hover over the segments to get their start and end times. You can also tap/hover on the moon, the hour hand, and the centre dot.</p>
@@ -245,6 +243,18 @@
 				<a href="https://github.com/virtualgeoff/sunclock">Source</a> &nbsp; 〜 &nbsp;
 				<a href="https://github.com/mourner/suncalc">SunCalc</a>
 			</small></p>
+
+			<a href="#" class="close">✕</a>
+		</div>
+	</section>
+
+	<section id="direction">
+		<div>
+			<h2>A note about direction</h2>
+			<p>In the Northern Hemisphere the Sun moves across the sky in a clockwise direction. (Before clocks, clockwise was called "<a href="https://en.wikipedia.org/wiki/Sunwise" target="wikipedia">sunwise</a>", and anti-clockwise was know as "<a href="https://en.wikipedia.org/wiki/Widdershins" target="wikipedia">widdershins</a>", meaning "against the way".)</p> 			
+			<p>In the Southern Hemisphere, however, the sun moves across the sky in an anti-clockwise direction. Sun Clock matches this by setting its direction of rotation based on your latitude: <strong>if you're in the Southern Hemishpere the clock will go 'backwards'</strong>. You can change it in the <a href="#settings">settings</a> if you wish.</p>
+			<p>Ideally you want the clock to turn in the same direction as the sun, regardless of which hemisphere you are in. If you are facing South, set it to clockwise; if facing North, anti-clockwise. You want sunrise on the clock to be to the East.</p>	
+			<p>In fact, if you face the right direction and tilt you screen at the right angle, the hour hand will track the movement of the Sun across the sky. Exactly how to do this is left as an exercise for the reader, but you want the screen to lie in the plane of the <a href="https://en.wikipedia.org/wiki/Ecliptic" target="wikipedia">ecliptic</a>, and solar noon to be "up".</p>
 
 			<a href="#" class="close">✕</a>
 		</div>
