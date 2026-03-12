@@ -2,7 +2,7 @@
 /* globals self, caches */
 
 const debug = self.location?.hostname === 'localhost' || self.location?.hostname === '127.0.0.1' || self.location?.search?.includes('debug=1');
-const currentCache = '4.8.0';
+const currentCache = '4.8.1';
 const assets = [
 	"/",
 	"/index.html",
@@ -72,11 +72,14 @@ self.addEventListener('fetch', event => {
 		event.respondWith(
 			fetch(event.request)
 				.then(response => {
-					// Cache the new response if it's valid
-					return caches.open(currentCache).then(cache => {
-						cache.put(event.request, response.clone());
-						return response;
-					});
+					// Cache the new response if it's valid (Cache API only supports GET)
+					if (event.request.method === 'GET') {
+						return caches.open(currentCache).then(cache => {
+							cache.put(event.request, response.clone());
+							return response;
+						});
+					}
+					return response;
 				})
 				.catch(() => {
 					// Fallback to cached HTML if network fails
@@ -95,12 +98,13 @@ self.addEventListener('fetch', event => {
 					return response;
 				}
 
-				// If not in cache, fetch and cache it
+				// If not in cache, fetch and cache it (Cache API only supports GET)
 				return fetch(event.request.clone()).then(response => {
-					if (response.status < 400) {
+					if (response.status < 400 && event.request.method === 'GET') {
+						const responseToCache = response.clone();
 						if (debug) { console.log(`Caching: ${response.url}`); }
 						caches.open(currentCache).then(cache => {
-							cache.put(event.request, response.clone());
+							cache.put(event.request, responseToCache);
 						});
 					}
 					return response;

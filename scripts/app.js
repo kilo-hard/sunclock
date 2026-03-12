@@ -13,7 +13,7 @@
 const $ = document.querySelector.bind(document);
 const $All = document.querySelectorAll.bind(document);
 const debug = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.search.includes('debug=1');
-const version = '4.8.0';
+const version = '4.8.1';
 
 if (debug) { console.info('version: ' + version); }
 
