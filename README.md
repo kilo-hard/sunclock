@@ -6,7 +6,7 @@ rising and setting times.
 
 ## License
 
-Sun Clock is released under the [MIT License](LICENSE).
+Sun Clock is released under the [MIT License](LICENSE.txt).
 
 You are free to use, modify, and distribute this project, including in proprietary
 software, provided you include the copyright notice and license text when distributing
