@@ -394,7 +394,7 @@ const SunClock = (function() {
 		// draw the moon icon (instead of using unicode characters)
 		// get x radius and sweep direction for each half of the path
 
-		let ry = radius || 6;
+		let ry = radius || 8;
 		let cosX = Math.abs(Math.cos( phase * tau ));
 		// x-radius
 		let rx1 = (phase < 0.50) ? ry * cosX : ry;  // left arc
@@ -605,7 +605,7 @@ const SunClock = (function() {
 		minuteHand.setAttribute('transform', `rotate(${ minutes * direction * 6 })`); //  6° per minute
 		hourHand.setAttribute('transform',   `rotate(${ hours  * direction * 15 })`); // 15° per hour
 		moonHand.setAttribute('transform', `rotate(${ (hours * direction * 15) - (moonPhase * direction * 360) })`); // ~14.5° per hour
-		moonIcon.setAttribute('transform', `translate(0 80) rotate(${90 + direction * 90})`); // only on direction change
+		moonIcon.setAttribute('transform', `translate(0 40) rotate(${90 + direction * 90})`); // only on direction change
 
 		// clock icon hand
 		clockIconHours.setAttribute('transform', `rotate(${ hours * direction * 15 })`);
