@@ -634,6 +634,7 @@ const SunClock = (function() {
 		// update the sun times at midnight
 		if ( then && (now.getDate() !== then.getDate()) ) {
 			if (debug) { console.log('midnight: updating sun times!'); }
+			getMoonPhase();
 			getSunTimes();
 			writeDate();
 		}
